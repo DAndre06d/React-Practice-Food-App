@@ -4,7 +4,9 @@ const defaultCart = {
   items: [],
   totalAmount: 0
 };
+//this will be the function that will be working once the dispatch cartState is triggered
 const cartReducer = (state, action) => {
+  //this checks what the action type is and if its "Add" this will work in the back gorund to add the item
   if (action.type === "Add") {
     const newTotalAmount =
       state.totalAmount + action.item.price * action.item.amount;
@@ -29,6 +31,7 @@ const cartReducer = (state, action) => {
       totalAmount: newTotalAmount
     };
   }
+   //this checks what the action type is and if it's "Remove" this will work in the background to delete the item that is selected 
   if (action.type === "Remove") {
     const findExistIndex = state.items.findIndex(
       (data) => data.id === action.id
@@ -65,6 +68,7 @@ const CartProvider = (props) => {
       id: id
     });
   };
+  //this is simply to initialized the context value
   const cartContext = {
     items: cartState.items,
     totalAmount: cartState.totalAmount,
