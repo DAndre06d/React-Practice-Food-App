@@ -1,41 +1,39 @@
 import Style from "./availableMeal.module.css";
 import Card from "../UI/Card/Card";
 import MealItem from "./mealItem/MealItem";
-const DUMMY_MEALS = [
-  {
-    id: "m1",
-    name: "Sushi",
-    description: "Finest fish and veggies",
-    price: 22.99
-  },
-  {
-    id: "m2",
-    name: "Schnitzel",
-    description: "A german specialty!",
-    price: 16.5
-  },
-  {
-    id: "m3",
-    name: "Barbecue Burger",
-    description: "American, raw, meaty",
-    price: 12.99
-  },
-  {
-    id: "m4",
-    name: "Green Bowl",
-    description: "Healthy...and green...",
-    price: 18.99
-  }
-];
+import { useEffect, useState } from "react";
+import useHttp from "../../hooks/UseHttp";
+
 const AvailableMeal = () => {
-  const mealList = DUMMY_MEALS.map((data) => (
-    <MealItem key={data.id} meal={data} />
-  ));
+  const [meals, setMeals] = useState([]);
+  const { sendRequest, isLoading, error } = useHttp();
+  useEffect(() => {
+    const transformfetchMeal = (meal) => {
+      const loadedMeals = [];
+      for (const key in meal) {
+        loadedMeals.push({
+          id: key,
+          name: meal[key].name,
+          description: meal[key].description,
+          price: meal[key].price
+        });
+      }
+      setMeals(loadedMeals);
+    };
+    sendRequest(
+      {
+        url:
+          "https://react-movie-practice-2d98d-default-rtdb.asia-southeast1.firebasedatabase.app/Meal.json"
+      },
+      transformfetchMeal
+    );
+  }, [sendRequest]);
+  const mealList = meals.map((data) => <MealItem key={data.id} meal={data} />);
   return (
     <>
       <section className={Style.meals}>
         <Card>
-          <ul>{mealList}</ul>
+        {error ? <p>{error}</p> : isLoading ?<p>Loading....</p> : <ul>{mealList}</ul> }
         </Card>
       </section>
     </>
