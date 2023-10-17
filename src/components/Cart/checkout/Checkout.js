@@ -20,7 +20,7 @@ const Checkout = (props) =>{
         inputChangeHandler: postalChangeHandler,
          blurHandler: postalBlurHandler, 
          IsValueValid: isPostalValid, 
-         reset: postalReset} =useInput((value) => value.trim().length >= 5)
+         reset: postalReset} =useInput((value) => value.trim().length >= 2)
     const {value: enteredCity, 
         hasError: cityHasError, 
         inputChangeHandler: cityChangeHandler,
@@ -30,10 +30,15 @@ const Checkout = (props) =>{
     const submitHandler = (e) =>{
         e.preventDefault()
         if(!formValidty){
-            return{
-
-            }
+            return
         }
+        const userData = {
+            name: enteredName,
+            street: enteredStreet,
+            city: enteredCity,
+            postal: enteredPostal
+        }
+        props.onSubmitOrder(userData)
         nameReset()
         streetReset()
         postalReset()

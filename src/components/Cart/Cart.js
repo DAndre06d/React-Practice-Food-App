@@ -4,7 +4,9 @@ import MealModal from "../UI/MealModal/MealModal";
 import CartContext from "../../store/cart-context";
 import CartItem from "./CartItem";
 import Checkout from "./checkout/Checkout";
+import useHttp from "../../hooks/UseHttp";
 const Cart = (props) => {
+  const {sendRequest} = useHttp()
   const [isCheckout, setCheckout] = useState(false)
   const cartCtx = useContext(CartContext);
   const totalAmount = `$${cartCtx.totalAmount.toFixed(2)}`;
@@ -32,6 +34,18 @@ const Cart = (props) => {
   const orderHandler = () =>{
     setCheckout(true)
   }
+  const onSubmitOrder = async (userData) =>{
+    sendRequest({
+      url: "https://react-movie-practice-2d98d-default-rtdb.asia-southeast1.firebasedatabase.app/orders.json",
+      method: "POST",
+      header: {"content-type" : "app;ication/json"},
+      body: {
+        user: userData,
+        orderItems: cartCtx.items,
+        totalAmount: totalAmount
+      }
+    })
+  }
   const modalAction =  <div className={style.actions}>
   <button className={style["button--alt"]} onClick={props.onClose}>
     {" "}
@@ -50,7 +64,7 @@ const Cart = (props) => {
         <span>Total Amount:</span>
         <span> {totalAmount}</span>
       </div>
-      {isCheckout && <Checkout onCancel={props.onClose}/>}
+      {isCheckout && <Checkout onCancel={props.onClose} onSubmitOrder={onSubmitOrder}/>}
       {!isCheckout && modalAction}
     </MealModal>
   );
